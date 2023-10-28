@@ -10,4 +10,8 @@ public interface ItemRepository {
     List<Item> findByUserId(int id);
 
     Item save(int id, ItemDto itemDto);
+
+    Item updateItem(int id, int itemId, ItemDto itemDto);
+
+    Item findByItemId(int id);
 }

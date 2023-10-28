@@ -21,4 +21,9 @@ public class ItemServiceImpl implements ItemService {
     public Item addNewItem(int userId, ItemDto itemDto) {
         return itemRepository.save(userId, itemDto);
     }
+
+    @Override
+    public Item updateItem(int userId, int itemId, ItemDto itemDto) {
+        return itemRepository.updateItem(userId,itemId,itemDto);
+    }
 }

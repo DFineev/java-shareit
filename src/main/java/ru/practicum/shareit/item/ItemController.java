@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,14 @@ public class ItemController {
                     @RequestBody ItemDto itemDto) {
         return itemService.addNewItem(userId,itemDto);
     }
-/*
+
+    @PatchMapping ("/{itemId}")
+    public Item update(@RequestHeader("X-Sharer-User-Id") int userId,
+                        @PathVariable("itemId") int itemId,
+                        @RequestBody ItemDto itemDto){
+        return itemService.updateItem(userId,itemId,itemDto);
+    }
+    /*
     @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader("X-Later-User-Id") int userId,
                            @PathVariable Long itemId) {
