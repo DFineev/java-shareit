@@ -18,12 +18,20 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
+    public User getUserById(@PathVariable int userId) {
+        return userService.getUserById(userId);
     }
 
     @PostMapping
     public User saveNewUser(@Valid @RequestBody User user) {
         return userService.saveUser(user);
     }
+
+    @PatchMapping("/{userId}")
+    public User updateUser(@PathVariable int userId,
+                           @Valid @RequestBody User user){
+        return userService.updateUser(userId,user);
+    }
+
+
 }

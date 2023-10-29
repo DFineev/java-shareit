@@ -9,4 +9,6 @@ public interface UserRepository {
    User getUserById(int id);
 
     User save(User user);
+    User updateUser(int id,User user);
+
 }

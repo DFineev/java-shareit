@@ -21,4 +21,8 @@ private final UserRepository userRepository;
     public User saveUser(User user){
        return userRepository.save(user);
     }
+    @Override
+    public User updateUser(int id, User user){
+        return userRepository.updateUser(id,user);
+    }
 }

@@ -7,4 +7,6 @@ public interface UserService {
 
     User getUserById(int id);
     User saveUser(User user);
+
+    User updateUser(int id, User user);
 }
