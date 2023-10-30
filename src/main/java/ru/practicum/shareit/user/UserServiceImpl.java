@@ -25,4 +25,8 @@ private final UserRepository userRepository;
     public User updateUser(int id, User user){
         return userRepository.updateUser(id,user);
     }
+    @Override
+    public void deleteUser(int userId){
+        userRepository.deleteUser(userId);
+    }
 }

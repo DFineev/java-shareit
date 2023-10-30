@@ -2,8 +2,11 @@ package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +16,14 @@ import java.util.Map;
 @Repository
 @Component
 public class ItemRepositoryImpl implements ItemRepository {
+    private final UserRepository userRepository;
 
     private final ItemMapper itemMapper;
     private final Map<Integer,Item> items = new HashMap<>();
     public int nextId = 1;
 
-    public ItemRepositoryImpl(ItemMapper itemMapper) {
+    public ItemRepositoryImpl(UserRepository userRepository, ItemMapper itemMapper) {
+        this.userRepository = userRepository;
         this.itemMapper = itemMapper;
     }
 
@@ -37,6 +42,9 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item save(int id, ItemDto itemDto) {
         Item newItem = itemMapper.toEntity(itemDto,id);
         newItem.setId(nextId++);
+        if (newItem.getAvailable()==null) {
+            throw new ValidationException("Не указана доступность предмета");
+        }
         items.put(newItem.getId(),newItem);
         return newItem;
     }

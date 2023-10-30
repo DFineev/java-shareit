@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.*;
@@ -34,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository{
     @Override
     public User getUserById(int id){
         if (!users.containsKey(id)) {
-            throw new IllegalArgumentException();
+            throw new UserNotFoundException("Пользователь не найден");
         }
         return users.get(id);
     }
@@ -52,6 +53,11 @@ public class UserRepositoryImpl implements UserRepository{
         }
         users.put(id,user);
         return user;
+    }
+
+    @Override
+    public void deleteUser(int userId){
+        users.remove(userId);
     }
 
 

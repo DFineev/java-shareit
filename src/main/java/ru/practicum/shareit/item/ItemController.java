@@ -33,11 +33,14 @@ public class ItemController {
         return itemService.updateItem(userId,itemId,itemDto);
     }
 
-
-    /*
-    @DeleteMapping("/{itemId}")
+   /* @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader("X-Later-User-Id") int userId,
-                           @PathVariable Long itemId) {
+                           @PathVariable int itemId) {
         itemService.deleteItem(userId, itemId);
+    }
+    @GetMapping("/{itemId}")
+    public ItemDto getItemById(@RequestHeader(value = "X-Later-User-Id") long userId,
+                                  @PathVariable int itemId) {
+        return itemService.getItemById(itemId);
     }*/
 }
