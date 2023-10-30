@@ -30,7 +30,6 @@ public class ItemMapper {
     public ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
-                obtainOwnerId(item),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),

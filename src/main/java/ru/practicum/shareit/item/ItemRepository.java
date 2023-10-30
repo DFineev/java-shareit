@@ -11,7 +11,10 @@ public interface ItemRepository {
 
     Item save(int id, ItemDto itemDto);
 
-    Item updateItem(int id, int itemId, ItemDto itemDto);
+    ItemDto updateItem(int id, int itemId, Item item);
 
-    Item findByItemId(int id);
+  //  Item findByItemId(int id);
+
+    void deleteItem(int userId,int itemId);
+    ItemDto getItemByUserIdAndItemId(int userId,int itemId);
 }

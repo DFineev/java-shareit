@@ -23,7 +23,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item updateItem(int userId, int itemId, ItemDto itemDto) {
-        return itemRepository.updateItem(userId,itemId,itemDto);
+    public ItemDto updateItem(int userId, int itemId, Item item) {
+        return itemRepository.updateItem(userId,itemId,item);
+    }
+    @Override
+    public void deleteItem(int userId,int itemId){
+        itemRepository.deleteItem(userId,itemId);
+    }
+
+    @Override
+    public ItemDto getItemByUserIdAndItemId(int userId,int itemId){
+       return itemRepository.getItemByUserIdAndItemId(userId, itemId);
     }
 }

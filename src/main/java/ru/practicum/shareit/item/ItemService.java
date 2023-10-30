@@ -11,6 +11,10 @@ public interface ItemService {
 
     Item addNewItem(int userId, ItemDto itemDto);
 
-    Item updateItem(int userId, int itemId, ItemDto itemDto);
+    ItemDto updateItem(int userId, int itemId, Item item);
+
+    void deleteItem(int userId,int itemId);
+
+    ItemDto getItemByUserIdAndItemId(int userId,int itemId);
 
 }
