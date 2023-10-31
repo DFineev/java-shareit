@@ -29,9 +29,10 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public User updateUser(@PathVariable int userId,
-                           @Valid @RequestBody User user){
-        return userService.updateUser(userId,user);
+                           @Valid @RequestBody User user) {
+        return userService.updateUser(userId, user);
     }
+
     @DeleteMapping("/{userId}")
     public void deleteItem(@PathVariable int userId) {
         userService.deleteUser(userId);

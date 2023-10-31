@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -24,14 +23,14 @@ public class ItemController {
     @PostMapping
     public Item add(@RequestHeader("X-Sharer-User-Id") int userId,
                     @Valid @RequestBody ItemDto itemDto) {
-        return itemService.addNewItem(userId,itemDto);
+        return itemService.addNewItem(userId, itemDto);
     }
 
-    @PatchMapping ("/{itemId}")
+    @PatchMapping("/{itemId}")
     public ItemDto update(@RequestHeader("X-Sharer-User-Id") int userId,
-                        @PathVariable("itemId") int itemId,
-                        @RequestBody Item item){
-        return itemService.updateItem(userId,itemId,item);
+                          @PathVariable("itemId") int itemId,
+                          @RequestBody Item item) {
+        return itemService.updateItem(userId, itemId, item);
     }
 
     @DeleteMapping("/{itemId}")
@@ -43,6 +42,12 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@RequestHeader(value = "X-Sharer-User-Id") int userId,
                                @PathVariable int itemId) {
-        return itemService.getItemByUserIdAndItemId(userId,itemId);
+        return itemService.getItemByUserIdAndItemId(userId, itemId);
+    }
+
+    @GetMapping("/search")
+    public List<ItemDto> searchItems(@RequestHeader(value = "X-Sharer-User-Id") int userId,
+                                     @RequestParam String text) {
+        return itemService.searchItems(userId, text);
     }
 }

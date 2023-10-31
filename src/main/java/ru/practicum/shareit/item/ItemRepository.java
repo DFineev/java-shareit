@@ -13,8 +13,9 @@ public interface ItemRepository {
 
     ItemDto updateItem(int id, int itemId, Item item);
 
-  //  Item findByItemId(int id);
+    void deleteItem(int userId, int itemId);
 
-    void deleteItem(int userId,int itemId);
-    ItemDto getItemByUserIdAndItemId(int userId,int itemId);
+    ItemDto getItemByUserIdAndItemId(int userId, int itemId);
+
+    List<ItemDto> searchItems(int userId, String query);
 }

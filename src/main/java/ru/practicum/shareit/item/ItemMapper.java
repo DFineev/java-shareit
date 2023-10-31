@@ -9,11 +9,11 @@ import ru.practicum.shareit.user.UserRepository;
 @Component
 public class ItemMapper {
 
-      private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
 
     public ItemMapper(UserRepository userRepository) {
-                this.userRepository = userRepository;
+        this.userRepository = userRepository;
     }
 
     public Item toEntity(ItemDto dto, int ownerId) {
@@ -33,12 +33,12 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest()// != null ? //item.getRequest().getId() : null
+                item.getRequest()
         );
     }
 
     private User obtainOwner(int ownerId) {
-                return userRepository.getUserById(ownerId);
+        return userRepository.getUserById(ownerId);
     }
 
     private int obtainOwnerId(Item item) {

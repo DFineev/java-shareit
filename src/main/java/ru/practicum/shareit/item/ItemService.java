@@ -13,8 +13,10 @@ public interface ItemService {
 
     ItemDto updateItem(int userId, int itemId, Item item);
 
-    void deleteItem(int userId,int itemId);
+    void deleteItem(int userId, int itemId);
 
-    ItemDto getItemByUserIdAndItemId(int userId,int itemId);
+    ItemDto getItemByUserIdAndItemId(int userId, int itemId);
+
+    List<ItemDto> searchItems(int userId, String query);
 
 }

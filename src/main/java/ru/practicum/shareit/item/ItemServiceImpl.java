@@ -24,15 +24,21 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(int userId, int itemId, Item item) {
-        return itemRepository.updateItem(userId,itemId,item);
-    }
-    @Override
-    public void deleteItem(int userId,int itemId){
-        itemRepository.deleteItem(userId,itemId);
+        return itemRepository.updateItem(userId, itemId, item);
     }
 
     @Override
-    public ItemDto getItemByUserIdAndItemId(int userId,int itemId){
-       return itemRepository.getItemByUserIdAndItemId(userId, itemId);
+    public void deleteItem(int userId, int itemId) {
+        itemRepository.deleteItem(userId, itemId);
+    }
+
+    @Override
+    public ItemDto getItemByUserIdAndItemId(int userId, int itemId) {
+        return itemRepository.getItemByUserIdAndItemId(userId, itemId);
+    }
+
+    @Override
+    public List<ItemDto> searchItems(int userId, String query) {
+        return itemRepository.searchItems(userId, query);
     }
 }
