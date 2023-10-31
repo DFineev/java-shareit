@@ -1,6 +1,6 @@
 package ru.practicum.shareit.exception;
 
-public class ConflictException extends RuntimeException{
+public class ConflictException extends RuntimeException {
     private final String parameter;
 
     public ConflictException(String parameter) {

@@ -17,14 +17,15 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ValidationException e){
+    public ErrorResponse handleValidationException(final ValidationException e) {
         return new ErrorResponse(
                 String.format("Введен некорректный параметр \"%s\".", e.getParameter())
         );
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleValidationException(final UserNotFoundException e){
+    public ErrorResponse handleValidationException(final UserNotFoundException e) {
         return new ErrorResponse(
                 String.format("Введен некорректный параметр \"%s\".", e.getParameter())
         );
