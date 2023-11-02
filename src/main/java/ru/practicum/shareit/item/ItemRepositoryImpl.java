@@ -1,24 +1,29 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
+
+import java.util.stream.Collectors;
 
 import java.util.*;
 
 @Repository
-@Component
 @Slf4j
 public class ItemRepositoryImpl implements ItemRepository {
 
+    private final UserRepository userRepository;
+
     private final ItemMapper itemMapper;
     private final Map<Integer, Item> items = new HashMap<>();
-    public int nextId = 1;
+    public int currentId = 1;
 
-    public ItemRepositoryImpl(ItemMapper itemMapper) {
+    public ItemRepositoryImpl(UserRepository userRepository, ItemMapper itemMapper) {
+        this.userRepository = userRepository;
         this.itemMapper = itemMapper;
     }
 
@@ -26,27 +31,34 @@ public class ItemRepositoryImpl implements ItemRepository {
     public List<Item> findByUserId(int id) {
         List<Item> itemsList = new ArrayList<>();
         for (Item value : items.values()) {
-            if (id == value.getOwner().getId()) {
+            if (id == value.getOwnerId()) {
                 itemsList.add(value);
             }
         }
+        log.info("Запрос выполнен");
         return itemsList;
     }
 
     @Override
-    public Item save(int id, ItemDto itemDto) {
-        Item newItem = itemMapper.toEntity(itemDto, id);
-        newItem.setId(nextId++);
-        items.put(newItem.getId(), newItem);
-        return newItem;
+    public Item save(int userId, ItemDto itemDto) {
+        if (getUserById(userId) == null) {
+            throw new UserNotFoundException("Пользователь не найден");
+        } else {
+            Item newItem = itemMapper.toEntity(itemDto, userId);
+            newItem.setId(generateId());
+            items.put(newItem.getId(), newItem);
+            log.info("Предмет добавлен");
+            return newItem;
+        }
     }
 
     @Override
     public ItemDto updateItem(int userId, int itemId, Item item) {
-
-        if (userId == 0) throw new UserNotFoundException("Пользователь не указан");
+        if (userId == 0) {
+            throw new UserNotFoundException("Пользователь не указан");
+        }
         Item requestedItem = findByItemId(itemId);
-        if (userId == requestedItem.getOwner().getId()) {
+        if (userId == requestedItem.getOwnerId()) {
             item.setId(itemId);
             if (item.getName() != null) {
                 requestedItem.setName(item.getName());
@@ -58,39 +70,56 @@ public class ItemRepositoryImpl implements ItemRepository {
                 requestedItem.setAvailable(item.getAvailable());
             }
             items.put(itemId, requestedItem);
+            log.info("Запрос на обновление предмета выполнен");
             return itemMapper.toItemDto(requestedItem);
-        } else throw new UserNotFoundException("Пользователь не авторизован");
+        } else {
+            throw new UserNotFoundException("Пользователь не авторизован");
+        }
     }
 
     @Override
     public void deleteItem(int userId, int itemId) {
-        if (findByItemId(itemId).getOwner().getId() == userId) {
+        if (findByItemId(itemId).getOwnerId() == userId) {
             items.remove(itemId);
-        } else throw new UserNotFoundException("Пользователь не найден");
+            log.info("Запрос на удаление предмета выполнен");
+        } else {
+            throw new UserNotFoundException("Пользователь не найден");
+        }
     }
 
     public Item findByItemId(int itemId) {
+        log.info("Запрос выполнен");
         return items.get(itemId);
     }
 
     @Override
     public ItemDto getItemByUserIdAndItemId(int userId, int itemId) {
+        log.info("Запрос выполнен");
         return itemMapper.toItemDto(findByItemId(itemId));
     }
 
     @Override
     public List<ItemDto> searchItems(int userId, String query) {
         List<ItemDto> selection = new ArrayList<>();
-        if (query.isEmpty()) {
-            selection.clear();
+        if (!query.isEmpty()) {
+            selection = items.values().stream()
+                    .filter(v -> v.getName().toLowerCase().contains(query.toLowerCase()) || v.getDescription().toLowerCase().contains(query.toLowerCase()))
+                    .filter(v -> v.getAvailable())
+                    .map(v -> itemMapper.toItemDto(v))
+                    .collect(Collectors.toList());
+            log.info("Поисковый запрос выполнен");
         } else {
-            for (Item value : items.values()) {
-                if ((value.getName().toLowerCase().contains(query.toLowerCase()) || value.getDescription().toLowerCase().contains(query.toLowerCase())) && (value.getAvailable())) {
-                    selection.add(itemMapper.toItemDto(value));
-                }
-            }
+            log.info("Поисковый запрос пустой");
         }
         return selection;
+    }
+
+    private User getUserById(int userId) {
+        return userRepository.getUserById(userId);
+    }
+
+    private int generateId() {
+        return currentId++;
     }
 
 }

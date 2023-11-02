@@ -1,24 +1,23 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.exception.ValidateException;
 
 import java.util.*;
 
 @Repository
-@Component
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
     private final Map<Integer, User> users = new HashMap<>();
-    public int nextId = 1;
+    public int currentId = 1;
 
     @Override
     public List<User> findAll() {
+        log.info("Запрос выполнен");
         return new ArrayList<>(users.values());
     }
 
@@ -26,11 +25,12 @@ public class UserRepositoryImpl implements UserRepository {
     public User save(User user) {
         if (user.getEmail() == null) {
             log.info("Валидация не пройдена");
-            throw new ValidationException("Не указан email пользователя");
+            throw new ValidateException("Не указан email пользователя");
         }
         validator(user);
-        user.setId(nextId++);
+        user.setId(generateId());
         users.put(user.getId(), user);
+        log.info("Пользователь добавлен");
         return user;
     }
 
@@ -39,6 +39,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (!users.containsKey(id)) {
             throw new UserNotFoundException("Пользователь не найден");
         }
+        log.info("Запрос выполнен");
         return users.get(id);
     }
 
@@ -55,21 +56,27 @@ public class UserRepositoryImpl implements UserRepository {
             user.setName(originUser.getName());
         }
         users.put(id, user);
+        log.info("Запрос на обновление пользователя выполнен");
         return user;
     }
 
     @Override
     public void deleteUser(int userId) {
+        log.info("Запрос на удаление выполнен");
         users.remove(userId);
     }
 
 
-    public void validator(User user) {
+    private void validator(User user) {
         for (User value : users.values()) {
             if (Objects.equals(value.getEmail(), user.getEmail()) && user.getId() != value.getId()) {
                 log.info("Валидация не пройдена");
                 throw new ConflictException("Пользователь с таким email уже зарегистрирован");
             }
         }
+    }
+
+    private int generateId() {
+        return currentId++;
     }
 }

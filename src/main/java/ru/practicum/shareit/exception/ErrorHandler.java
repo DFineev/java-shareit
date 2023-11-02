@@ -5,29 +5,34 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice("ru.yandex.practicum.shareit")
 public class ErrorHandler {
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(final ConflictException e) {
         return new ErrorResponse(
-                String.format("Введен некорректный параметр \"%s\".", e.getParameter())
+                String.format("Введенный параметр уже используется " + e.getParameter())
         );
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ValidationException e) {
+    public ErrorResponse handleValidationException(final ValidateException e) {
         return new ErrorResponse(
-                String.format("Введен некорректный параметр \"%s\".", e.getParameter())
+                "Введен некорректный параметр "
         );
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleValidationException(final UserNotFoundException e) {
         return new ErrorResponse(
-                String.format("Введен некорректный параметр \"%s\".", e.getParameter())
+                String.format("Введен некорректный параметр " + e.getParameter())
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowable(final Throwable e) {
+        return new ErrorResponse(
+                "Произошла непредвиденная ошибка."
         );
     }
 }

@@ -3,46 +3,30 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
 
 @Component
 public class ItemMapper {
 
-    private final UserRepository userRepository;
 
-
-    public ItemMapper(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public Item toEntity(ItemDto dto, int ownerId) {
-        return new Item(
-                dto.getId(),
-                obtainOwner(ownerId),
-                dto.getName(),
-                dto.getDescription(),
-                dto.getAvailable(),
-                dto.getRequest()
-        );
+    public Item toEntity(ItemDto dto, int userId) {
+        return Item.builder()
+                .id(dto.getId())
+                .ownerId(userId)
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .available(dto.getAvailable())
+                .request(dto.getRequest())
+                .build();
     }
 
     public ItemDto toItemDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest()
-        );
-    }
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .request(item.getRequest())
+                .build();
 
-    private User obtainOwner(int ownerId) {
-        return userRepository.getUserById(ownerId);
     }
-
-    private int obtainOwnerId(Item item) {
-        return item.getOwner().getId();
-    }
-
 }
