@@ -1,22 +1,27 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemFullDto;
 import ru.practicum.shareit.item.model.Item;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public interface ItemService {
 
-    List<Item> getItems(int userId);
+    List<ItemFullDto> getItems(Integer userId);
 
-    Item addNewItem(int userId, ItemDto itemDto);
+    ItemDto addNewItem(int userId, ItemDto itemDto);
 
-    ItemDto updateItem(int userId, int itemId, Item item);
+    ItemDto updateItem(Integer userId, Integer itemId, ItemDto item);
 
     void deleteItem(int userId, int itemId);
 
-    ItemDto getItemByUserIdAndItemId(int userId, int itemId);
+    ItemFullDto getItemByUserIdAndItemId(int userId, int itemId);
 
-    List<ItemDto> searchItems(int userId, String query);
+    List<ItemDto> searchItems(String query);
+
+    CommentDto addComment (Integer userId, Integer itemId, CommentDto commentDto);
 
 }

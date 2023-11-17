@@ -1,5 +1,5 @@
 package ru.practicum.shareit.item;
-
+/*
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.UserNotFoundException;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import java.util.*;
 
-@Repository
+
 @Slf4j
 public class ItemRepositoryImpl implements ItemRepository {
 
@@ -115,7 +115,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     private User getUserById(int userId) {
-        return userRepository.getUserById(userId);
+        return userRepository.getById(userId);
     }
 
     private int generateId() {
@@ -123,4 +123,4 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
 }
-
+*/
