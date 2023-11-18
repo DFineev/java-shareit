@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +55,7 @@ public class BookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(USER_ERROR));
 
-        if (user.getId() == item.getOwner().getId()) {
+        if (Objects.equals(user.getId(), item.getOwner().getId())) {
             throw new ObjectNotFoundException(USER_ERROR);
         }
         booking.setBooker(user);
@@ -75,7 +76,7 @@ public class BookingService {
 
         Item item = booking.getItem();
 
-        if (item.getOwner().getId() != userId) {
+        if (!Objects.equals(item.getOwner().getId(), userId)) {
             throw new ObjectNotFoundException("Операция отклонена. Пользователь не является владельцем объекта.");
         }
 

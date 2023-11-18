@@ -185,6 +185,6 @@ public class ItemServiceImpl implements ItemService {
     private Boolean isOwner(Integer userId, Integer itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("User not found.")).getOwner().getId() == userId;
+                        new ObjectNotFoundException("User not found.")).getOwner().getId().equals(userId);
     }
 }
