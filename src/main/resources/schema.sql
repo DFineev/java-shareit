@@ -19,7 +19,7 @@ create TABLE IF NOT EXISTS item (
   name VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   available BOOLEAN NOT NULL,
-  user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+  owner_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
   request_id INTEGER REFERENCES request (id) ON DELETE CASCADE
   );
 create TABLE IF NOT EXISTS booking (
@@ -28,7 +28,7 @@ create TABLE IF NOT EXISTS booking (
     end_date TIMESTAMP WITHOUT TIME ZONE,
     status VARCHAR(30),
     item_id INTEGER REFERENCES item (id) ON delete CASCADE,
-    user_id INTEGER REFERENCES users (id) ON delete CASCADE
+    booker_id INTEGER REFERENCES users (id) ON delete CASCADE
 );
 
 create TABLE IF NOT EXISTS comment (
