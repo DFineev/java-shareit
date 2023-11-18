@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(int id, UserDto user) {
         User originUser = repository.findById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        log.info("Пользователь обновлен");
         return UserMapper.toUserDto(repository.save(updateUserNameAndEmail(originUser, user)));
     }
 
