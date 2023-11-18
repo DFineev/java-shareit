@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(int id, UserDto user) {
         User originUser = repository.findById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-       log.info("Пользователь обновлен");
+        log.info("Пользователь обновлен");
         return UserMapper.toUserDto(repository.save(updateUserNameAndEmail(originUser, user)));
     }
 

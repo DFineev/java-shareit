@@ -22,7 +22,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto add(@RequestHeader("X-Sharer-User-Id") int userId,
-                    @RequestBody ItemDto itemDto) {
+                       @RequestBody ItemDto itemDto) {
         return itemService.addNewItem(userId, itemDto);
     }
 
@@ -41,7 +41,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemFullDto getItemById(@RequestHeader(value = "X-Sharer-User-Id") int userId,
-                               @PathVariable int itemId) {
+                                   @PathVariable int itemId) {
         return itemService.getItemByUserIdAndItemId(userId, itemId);
     }
 

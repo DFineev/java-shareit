@@ -1,4 +1,5 @@
 package ru.practicum.shareit.booking;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class BookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(USER_ERROR));
 
-        if (user.getId()==item.getOwner().getId()) {
+        if (user.getId() == item.getOwner().getId()) {
             throw new ObjectNotFoundException(USER_ERROR);
         }
         booking.setBooker(user);
@@ -74,7 +75,7 @@ public class BookingService {
 
         Item item = booking.getItem();
 
-        if (item.getOwner().getId()!=userId) {
+        if (item.getOwner().getId() != userId) {
             throw new ObjectNotFoundException("Операция отклонена. Пользователь не является владельцем объекта.");
         }
 

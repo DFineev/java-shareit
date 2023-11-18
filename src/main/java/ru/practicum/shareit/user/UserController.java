@@ -9,14 +9,15 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="/users")
+@RequestMapping(path = "/users")
 @Component
 
 public class UserController {
     private final UserService userService;
+
     @Autowired
     public UserController(UserServiceImpl userService) {
-                this.userService = userService;
+        this.userService = userService;
 
     }
 
@@ -37,7 +38,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable int userId,
-                           @RequestBody UserDto user) {
+                              @RequestBody UserDto user) {
         return userService.updateUser(userId, user);
     }
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice ("ru.practicum.shareit")
+@RestControllerAdvice("ru.practicum.shareit")
 public class ErrorHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -34,6 +34,7 @@ public class ErrorHandler {
                 String.format("Введен некорректный параметр " + e.getParameter())
         );
     }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public ErrorResponse handleValidationException(final UserNotFoundException e) {
@@ -46,7 +47,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResponse handleThrowable(final Throwable e) {
-        return new ErrorResponse( "Произошла непредвиденная ошибка."
+        return new ErrorResponse("Произошла непредвиденная ошибка."
         );
     }
 
@@ -55,6 +56,7 @@ public class ErrorHandler {
     public ErrorResponse handleUnknownStateException(final UnknownBookingState e) {
         return new ErrorResponse(String.format("Unknown state: " + e.getParameter()));
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody String handleException(MethodArgumentNotValidException ex) {

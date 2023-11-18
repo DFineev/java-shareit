@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 
 @Entity
-@Table(name="item")
+@Table(name = "item")
 @Builder
 @Getter
 @Setter
@@ -18,14 +18,14 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
-    @Column(name="available")
+    @Column(name = "available")
     private Boolean available;
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
-    @JoinColumn(name="owner_id", referencedColumnName = "id")
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ItemRequest.class)
     @JoinColumn(name = "request_id", referencedColumnName = "id")
@@ -36,7 +36,7 @@ public class Item {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item otherItem = (Item) o;
-        return id!=null&&id.equals(otherItem.getId());
+        return id != null && id.equals(otherItem.getId());
     }
 
     @Override

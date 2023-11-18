@@ -3,9 +3,7 @@ package ru.practicum.shareit.item;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemFullDto;
-import ru.practicum.shareit.item.model.Item;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public interface ItemService {
@@ -22,6 +20,6 @@ public interface ItemService {
 
     List<ItemDto> searchItems(String query);
 
-    CommentDto addComment (Integer userId, Integer itemId, CommentDto commentDto);
+    CommentDto addComment(Integer userId, Integer itemId, CommentDto commentDto);
 
 }
