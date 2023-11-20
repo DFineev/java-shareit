@@ -18,7 +18,6 @@ import ru.practicum.shareit.user.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +38,7 @@ public class BookingService {
 
     @Transactional
     public BookingInfoDto addBooking(Integer userId, BookingDto bookingDto) {
-        if (!BookingValidator.bookingValidate(bookingDto)) {
+        if (!bookingValidate(bookingDto)) {
             throw new ValidateException("Валидация объекта не пройдена");
         }
 
@@ -65,6 +64,7 @@ public class BookingService {
         return BookingMapper.toBookingInfoDto(repository.save(booking));
     }
 
+    @Transactional
     public BookingInfoDto updateBookingStatus(Integer userId, Integer bookingId, Boolean approved) {
 
         Booking booking = repository.findById(bookingId)
@@ -109,7 +109,7 @@ public class BookingService {
         BookingState bookingState = checkState(stateParam);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
-        List<Booking> bookingList = new ArrayList<>();
+        List<Booking> bookingList;
         LocalDateTime dateTimeNow = LocalDateTime.now();
 
         User user = userRepository.findById(userId).orElseThrow(()
@@ -148,7 +148,7 @@ public class BookingService {
         BookingState bookingState = checkState(stateParam);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
-        List<Booking> bookingList = new ArrayList<>();
+        List<Booking> bookingList;
         LocalDateTime dateTimeNow = LocalDateTime.now();
 
         User user = userRepository.findById(userId).orElseThrow(() ->
@@ -188,5 +188,12 @@ public class BookingService {
         } catch (IllegalArgumentException exception) {
             throw new UnknownBookingState(state);
         }
+    }
+
+    private Boolean bookingValidate(BookingDto entity) {
+        return (entity.getStart() != null && entity.getEnd() != null && entity.getItemId() != null) && (!entity
+                .getStart().equals(entity.getEnd())) &&
+                (!entity.getEnd().isBefore(entity.getStart())) && (!entity.getStart().isBefore(LocalDateTime.now()) &&
+                !entity.getEnd().isBefore(LocalDateTime.now()));
     }
 }

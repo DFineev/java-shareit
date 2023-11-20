@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addNewItem(int userId, ItemDto itemDto) {
-        if (ItemValidator.itemCheck(itemDto)) {
+        if (itemCheck(itemDto)) {
             throw new ValidateException("Валидация не пройдена");
         }
         Item newItem = ItemMapper.toItem(itemDto);
@@ -186,5 +186,15 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findById(itemId)
                 .orElseThrow(() ->
                         new ObjectNotFoundException("User not found.")).getOwner().getId().equals(userId);
+    }
+
+    private boolean itemCheck(ItemDto item) {
+        return item.getName() == null ||
+                item.getName().isBlank() ||
+                item.getName().isEmpty() ||
+                item.getAvailable() == null ||
+                item.getDescription() == null ||
+                item.getDescription().isEmpty() ||
+                item.getDescription().isBlank();
     }
 }
