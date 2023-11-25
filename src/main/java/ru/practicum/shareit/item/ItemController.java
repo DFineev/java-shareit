@@ -1,36 +1,40 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemFullDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/items")
+@Slf4j
 public class ItemController {
-
 
     private final ItemService itemService;
 
     @GetMapping
-    public List<Item> get(@RequestHeader("X-Sharer-User-Id") int userId) {
+    public List<ItemFullDto> get(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+        log.info("Выполнен запрос объектов пользователя");
         return itemService.getItems(userId);
     }
 
     @PostMapping
-    public Item add(@RequestHeader("X-Sharer-User-Id") int userId,
-                    @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto add(@RequestHeader("X-Sharer-User-Id") int userId,
+                       @RequestBody ItemDto itemDto) {
+        log.info("Объект успешно добавлен");
         return itemService.addNewItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") int userId,
-                          @PathVariable("itemId") int itemId,
-                          @RequestBody Item item) {
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                          @PathVariable("itemId") Integer itemId,
+                          @RequestBody ItemDto item) {
+        log.info("Объект успешно обновлен");
         return itemService.updateItem(userId, itemId, item);
     }
 
@@ -38,17 +42,27 @@ public class ItemController {
     public void deleteItem(@RequestHeader("X-Sharer-User-Id") int userId,
                            @PathVariable int itemId) {
         itemService.deleteItem(userId, itemId);
+        log.info("Объект успешно удален");
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader(value = "X-Sharer-User-Id") int userId,
-                               @PathVariable int itemId) {
+    public ItemFullDto getItemById(@RequestHeader(value = "X-Sharer-User-Id") int userId,
+                                   @PathVariable int itemId) {
+        log.info("Выполнен запрос объекта");
         return itemService.getItemByUserIdAndItemId(userId, itemId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestHeader(value = "X-Sharer-User-Id") int userId,
-                                     @RequestParam String text) {
-        return itemService.searchItems(userId, text);
+    public List<ItemDto> searchItems(@RequestParam String text) {
+        log.info("Выполнен поисковый запрос по объектам");
+        return itemService.searchItems(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(value = "X-Sharer-User-Id") Integer userId,
+                                 @PathVariable Integer itemId,
+                                 @RequestBody CommentDto commentDto) {
+        log.info("Комментарий добавлен");
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }
