@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addNewItem(Integer userId, ItemDto itemDto) {
         if (itemCheck(itemDto)) {
-            throw new ValidateException("Валидация не пройдена");
+            throw new ValidateException("Validation didn't complete");
         }
         Item newItem = ItemMapper.toItem(itemDto);
         newItem.setOwner(userRepository.findById(userId).orElseThrow(() ->
