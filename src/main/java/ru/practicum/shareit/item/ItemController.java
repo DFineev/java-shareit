@@ -18,9 +18,11 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemFullDto> get(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public List<ItemFullDto> get(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Выполнен запрос объектов пользователя");
-        return itemService.getItems(userId);
+        return itemService.getItems(userId,from,size);
     }
 
     @PostMapping
@@ -53,9 +55,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text) {
+    public List<ItemDto> searchItems(@RequestParam String text,
+                                     @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                     @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Выполнен поисковый запрос по объектам");
-        return itemService.searchItems(text);
+        return itemService.searchItems(text,from,size);
     }
 
     @PostMapping("/{itemId}/comment")
