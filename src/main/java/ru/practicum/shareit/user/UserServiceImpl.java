@@ -26,8 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<UserDto> users = repository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
-        return users;
+        return repository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
@@ -37,11 +36,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User saveUser(UserDto user) {
+    public UserDto saveUser(UserDto user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || user.getEmail().isEmpty()) {
             throw new ValidateException("Не указан email пользователя");
         }
-        return repository.save(UserMapper.toUser(user));
+        if (repository.existsUserByEmail(user.getEmail())) {
+            repository.save(UserMapper.toUser(user));
+            throw new ConflictException("Пользователь с таким email уже зарегистрирован");
+        }
+        return UserMapper.toUserDto(repository.save(UserMapper.toUser(user)));
     }
 
     @Override
@@ -50,8 +53,12 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(repository.save(updateUserNameAndEmail(originUser, user)));
     }
 
+    @Transactional
     @Override
     public void deleteUser(int userId) {
+        if (!repository.existsById(userId)) {
+            throw new UserNotFoundException("Пользователь не найден");
+        }
         repository.deleteById(userId);
     }
 
