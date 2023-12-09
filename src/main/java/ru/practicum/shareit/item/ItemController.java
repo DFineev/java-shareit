@@ -28,8 +28,7 @@ public class ItemController {
     @PostMapping
     public ItemDto add(@RequestHeader("X-Sharer-User-Id") int userId,
                        @RequestBody ItemDto itemDto) {
-        log.info("Объект успешно добавлен");
-        return itemService.addNewItem(userId, itemDto);
+       return itemService.addNewItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
