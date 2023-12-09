@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
         Item updatedItem = itemRepository.findById(itemId)
                 .orElseThrow(() ->
                         new ObjectNotFoundException("Объект не найден"));
-        if (updatedItem.getOwner().getId() != userId) {
+        if (!Objects.equals(updatedItem.getOwner().getId(), userId)) {
             throw new ObjectNotFoundException("Пользователь не является владельцем объекта");
         }
         Item savedItem = itemUpdate(updatedItem, item);
@@ -100,7 +101,7 @@ public class ItemServiceImpl implements ItemService {
 
         ItemFullDto itemFullDto = ItemMapper.toItemFull(item);
 
-        if (item.getOwner().getId() == userId) {
+        if (Objects.equals(item.getOwner().getId(), userId)) {
             setBookingToItem(itemFullDto);
         }
 
