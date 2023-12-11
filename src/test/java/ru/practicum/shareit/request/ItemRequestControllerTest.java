@@ -102,7 +102,7 @@ class ItemRequestControllerTest {
 
         mockMvc.perform(post("/requests")
                         .content(mapper.writeValueAsString(RequestMapper.toItemRequestDto(itemRequest)))
-                        .header("X-Sharer-User-Id", 10)
+                        .header("X-Sharer-User-Id", 1)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

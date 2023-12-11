@@ -12,6 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
 import ru.practicum.shareit.enums.BookingStatus;
+import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.ValidateException;
 import ru.practicum.shareit.item.dto.ItemFullDto;
 import ru.practicum.shareit.user.dto.UserInfoDto;
 
@@ -35,6 +38,8 @@ class BookingControllerTest {
     @Autowired
     private MockMvc mockMvc;
     private BookingInfoDto bookingInfoDto;
+
+    private BookingDto bookingDto;
     private static final String USERID_HEADER = "X-Sharer-User-Id";
 
 
@@ -51,7 +56,7 @@ class BookingControllerTest {
                 .status(BookingStatus.WAITING)
                 .build();
 
-        BookingDto bookingDto = BookingDto.builder()
+        bookingDto = BookingDto.builder()
                 .id(1)
                 .bookerId(10)
                 .itemId(20)
@@ -67,13 +72,41 @@ class BookingControllerTest {
                 .thenReturn(bookingInfoDto);
 
         mockMvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(bookingInfoDto))
+                        .content(mapper.writeValueAsString(bookingDto))
                         .header(USERID_HEADER, 10)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(bookingInfoDto)));
+    }
+
+    @Test
+    void addBookingIsFailedUserIdNotFoundTest() throws Exception {
+
+        when(bookingService.addBooking(100, bookingDto))
+                .thenThrow(UserNotFoundException.class);
+        mockMvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDto))
+                        .header(USERID_HEADER, 100)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void addBookingIsFailedBadBookingParameterTest() throws Exception {
+        when(bookingService.addBooking(10, bookingDto))
+                .thenThrow(ValidateException.class);
+        bookingDto.setStart(null);
+        mockMvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDto))
+                        .header(USERID_HEADER, 10)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -90,6 +123,7 @@ class BookingControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(bookingInfoDto)));
     }
 
+
     @Test
     void getCurrentBookingIsOkTest() throws Exception {
         when(bookingService.getCurrentBooking(anyInt(), anyInt()))
@@ -102,6 +136,18 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(bookingInfoDto)));
+    }
+
+    @Test
+    void getCurrentBookingFailedBookingNotFoundTest() throws Exception {
+        when(bookingService.getCurrentBooking(anyInt(), anyInt()))
+                .thenThrow(ObjectNotFoundException.class);
+        mockMvc.perform(get("/bookings" + "/10")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(USERID_HEADER, 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -126,6 +172,19 @@ class BookingControllerTest {
     }
 
     @Test
+    void getBookingIsFailedBadParameterTest() throws Exception {
+        when(bookingService.getBooking(any(), any(), anyInt(), anyInt()))
+                .thenThrow(ValidateException.class);
+
+        mockMvc.perform(get("/bookings" + "?state=ALL&size=-10")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(USERID_HEADER, 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void getOwnerBookingIsOkTest() throws Exception {
         when(bookingService.getOwnerBooking(any(), any(), anyInt(), anyInt()))
                 .thenReturn(List.of(bookingInfoDto));
@@ -144,5 +203,18 @@ class BookingControllerTest {
                         .header(USERID_HEADER, 10)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void getOwnerBookingIsFailedTest() throws Exception {
+        when(bookingService.getOwnerBooking(any(), any(), anyInt(), anyInt()))
+                .thenThrow(ValidateException.class);
+
+        mockMvc.perform(get("/bookings" + "/owner?state=ALL&from=-10")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(USERID_HEADER, 10)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

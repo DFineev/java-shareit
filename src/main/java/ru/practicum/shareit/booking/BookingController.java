@@ -51,6 +51,6 @@ public class BookingController {
                                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Выполнен запрос бронирований владельца " + stateParam);
-        return bookingService.getOwnerBooking(userId, stateParam,from,size);
+        return bookingService.getOwnerBooking(userId, stateParam, from, size);
     }
 }
