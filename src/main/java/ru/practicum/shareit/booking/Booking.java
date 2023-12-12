@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import ru.practicum.shareit.enums.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -27,11 +28,11 @@ public class Booking {
     @Column(name = "end_date")
     private LocalDateTime end;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Item.class)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "booker_id", referencedColumnName = "id")
     private User booker;
 
