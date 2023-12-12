@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,40 +75,90 @@ public class BookingRepositoryTest {
 
     @Test
     void findAllByBookerIdOrderByStartDescTest() {
-        List<Booking> bookingList2 = bookingRepository.findAllByBookerIdOrderByStartDesc(1, PageRequest.of(0, 1));
-        assertEquals(1, bookingList2.size());
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+        bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(1, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
     }
 
     @Test
     void findAllByBookerIdAndEndIsBeforeTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
         LocalDateTime end = LocalDateTime.now().plusDays(1);
-        List<Booking> bookingList2 = bookingRepository.findAllByBookerIdAndEndIsBefore(1, end, sort, PageRequest.of(0, 1));
-        assertEquals(1, bookingList2.size());
+        bookingList = bookingRepository.findAllByBookerIdAndEndIsBefore(1, end, sort, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
     }
 
     @Test
     void findAllByBookerIdAndStartIsAfterTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
         LocalDateTime end = LocalDateTime.now().minusDays(1);
-        List<Booking> bookingList2 = bookingRepository.findAllByBookerIdAndStartIsAfter(1, end, sort, PageRequest.of(0, 1));
-        assertEquals(1, bookingList2.size());
+        bookingList = bookingRepository.findAllByBookerIdAndStartIsAfter(1, end, sort, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
     }
 
     @Test
     void findAllByBookerIdAndStartIsBeforeAndEndIsAfterTest() {
-
-        List<Booking> bookingList2 = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(1,
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+        bookingList = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(1,
                 booking.getStart().plusHours(1), booking.getEnd().minusHours(1), sort, PageRequest.of(0, 1));
-        assertEquals(1, bookingList2.size());
+        assertEquals(1, bookingList.size());
     }
 
     @Test
     void findAllByBookerIdAndStatusTest() {
-        List<Booking> bookingList2 = bookingRepository.findAllByBookerIdAndStatus(1, BookingStatus.REJECTED, PageRequest.of(0, 1));
-        assertEquals(1, bookingList2.size());
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+        bookingList = bookingRepository.findAllByBookerIdAndStatus(1, BookingStatus.REJECTED, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
 
         booking.setStatus(BookingStatus.WAITING);
 
-        bookingList2 = bookingRepository.findAllByBookerIdAndStatus(1, BookingStatus.WAITING, PageRequest.of(0, 1));
-        assertEquals(1, bookingList2.size());
+        bookingList = bookingRepository.findAllByBookerIdAndStatus(1, BookingStatus.WAITING, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
     }
+
+    @Test
+    void findAllByItem_Owner_IdOrderByStartDescTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+        bookingList = bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(2, PageRequest.of(0, 10));
+        assertEquals(1, bookingList.size());
+    }
+
+    @Test
+    void findAllByItem_Owner_IdAndEndIsBeforeTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+        LocalDateTime end = LocalDateTime.now().plusDays(1);
+        bookingList = bookingRepository.findAllByItem_Owner_IdAndEndIsBefore(2, end, sort, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
+    }
+
+    @Test
+    void findAllByItem_Owner_IdAndStartIsAfterTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+        LocalDateTime end = LocalDateTime.now().minusDays(1);
+        bookingList = bookingRepository.findAllByItem_Owner_IdAndStartIsAfter(2, end, sort, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
+    }
+
+    @Test
+    void findAllByItem_Owner_IdAndStatusTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        assertEquals(0, bookingList.size());
+
+        bookingList = bookingRepository.findAllByItem_Owner_IdAndStatus(2, BookingStatus.REJECTED, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
+
+        booking.setStatus(BookingStatus.WAITING);
+
+        bookingList = bookingRepository.findAllByItem_Owner_IdAndStatus(2, BookingStatus.WAITING, PageRequest.of(0, 1));
+        assertEquals(1, bookingList.size());
+    }
+
 }
