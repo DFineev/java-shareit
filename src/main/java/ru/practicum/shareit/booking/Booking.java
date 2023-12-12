@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import ru.practicum.shareit.enums.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
