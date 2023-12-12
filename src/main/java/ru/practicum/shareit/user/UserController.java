@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User saveNewUser(@Valid @RequestBody UserDto user) {
+    public UserDto saveNewUser(@Valid @RequestBody UserDto user) {
         log.info("Пользователь успешно создан");
         return userService.saveUser(user);
     }

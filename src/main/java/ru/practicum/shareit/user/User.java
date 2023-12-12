@@ -20,10 +20,8 @@ public class User {
     private Integer id;
     @Column
     private String name;
-
     @Column(unique = true)
     @NotBlank
     @Email(message = "Неверный формат электронной почты")
     private String email;
-
 }

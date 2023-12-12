@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -64,7 +65,7 @@ public class BookingService {
         return BookingMapper.toBookingInfoDto(repository.save(booking));
     }
 
-    @Transactional
+
     public BookingInfoDto updateBookingStatus(Integer userId, Integer bookingId, Boolean approved) {
 
         Booking booking = repository.findById(bookingId)
@@ -104,7 +105,10 @@ public class BookingService {
         return BookingMapper.toBookingInfoDto(booking);
     }
 
-    public List<BookingInfoDto> getBooking(Integer userId, String stateParam) {
+    public List<BookingInfoDto> getBooking(Integer userId, String stateParam, Integer from, Integer size) {
+        if (from < 0 || size < 0) {
+            throw new ValidateException("Аргумент не может быть отрицательным");
+        }
 
         BookingState bookingState = checkState(stateParam);
 
@@ -117,22 +121,22 @@ public class BookingService {
 
         switch (bookingState) {
             case ALL:
-                bookingList = repository.findAllByBookerIdOrderByStartDesc(user.getId());
+                bookingList = repository.findAllByBookerIdOrderByStartDesc(user.getId(), PageRequest.of((from / size), size));
                 break;
             case PAST:
-                bookingList = repository.findAllByBookerIdAndEndIsBefore(user.getId(), dateTimeNow, sort);
+                bookingList = repository.findAllByBookerIdAndEndIsBefore(user.getId(), dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case FUTURE:
-                bookingList = repository.findAllByBookerIdAndStartIsAfter(user.getId(), dateTimeNow, sort);
+                bookingList = repository.findAllByBookerIdAndStartIsAfter(user.getId(), dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case CURRENT:
-                bookingList = repository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(user.getId(), dateTimeNow, dateTimeNow, sort);
+                bookingList = repository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(user.getId(), dateTimeNow, dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case WAITING:
-                bookingList = repository.findAllByBookerIdAndStatus(user.getId(), BookingStatus.WAITING);
+                bookingList = repository.findAllByBookerIdAndStatus(user.getId(), BookingStatus.WAITING, PageRequest.of((from / size), size));
                 break;
             case REJECTED:
-                bookingList = repository.findAllByBookerIdAndStatus(user.getId(), BookingStatus.REJECTED);
+                bookingList = repository.findAllByBookerIdAndStatus(user.getId(), BookingStatus.REJECTED, PageRequest.of((from / size), size));
                 break;
             default:
                 throw new UnknownBookingState(BOOKING_STATE_ERROR);
@@ -143,7 +147,10 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookingInfoDto> getOwnerBooking(Integer userId, String stateParam) {
+    public List<BookingInfoDto> getOwnerBooking(Integer userId, String stateParam, Integer from, Integer size) {
+        if (from < 0 || size < 0) {
+            throw new ValidateException("Аргумент не может быть отрицательным");
+        }
 
         BookingState bookingState = checkState(stateParam);
 
@@ -156,22 +163,22 @@ public class BookingService {
 
         switch (bookingState) {
             case ALL:
-                bookingList = repository.findAllByItem_Owner_IdOrderByStartDesc(user.getId());
+                bookingList = repository.findAllByItem_Owner_IdOrderByStartDesc(user.getId(), PageRequest.of((from / size), size));
                 break;
             case PAST:
-                bookingList = repository.findAllByItem_Owner_IdAndEndIsBefore(user.getId(), dateTimeNow, sort);
+                bookingList = repository.findAllByItem_Owner_IdAndEndIsBefore(user.getId(), dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case FUTURE:
-                bookingList = repository.findAllByItem_Owner_IdAndStartIsAfter(user.getId(), dateTimeNow, sort);
+                bookingList = repository.findAllByItem_Owner_IdAndStartIsAfter(user.getId(), dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case CURRENT:
-                bookingList = repository.findAllByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(user.getId(), dateTimeNow, dateTimeNow, sort);
+                bookingList = repository.findAllByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(user.getId(), dateTimeNow, dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case WAITING:
-                bookingList = repository.findAllByItem_Owner_IdAndStatus(user.getId(), BookingStatus.WAITING);
+                bookingList = repository.findAllByItem_Owner_IdAndStatus(user.getId(), BookingStatus.WAITING, PageRequest.of((from / size), size));
                 break;
             case REJECTED:
-                bookingList = repository.findAllByItem_Owner_IdAndStatus(user.getId(), BookingStatus.REJECTED);
+                bookingList = repository.findAllByItem_Owner_IdAndStatus(user.getId(), BookingStatus.REJECTED, PageRequest.of((from / size), size));
                 break;
             default:
                 throw new UnknownBookingState(BOOKING_STATE_ERROR);

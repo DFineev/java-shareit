@@ -20,7 +20,6 @@ public class ErrorHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
-
     public ErrorResponse handleNotFoundException(final ObjectNotFoundException e) {
         return new ErrorResponse(
                 String.format("Объект не найден", e.getMessage())

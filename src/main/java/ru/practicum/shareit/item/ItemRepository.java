@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +16,10 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
             "WHERE (LOWER(it.name) LIKE LOWER(CONCAT('%', :text, '%') ) OR " +
             "LOWER(it.description) LIKE LOWER(CONCAT('%', :text, '%'))) " +
             "AND it.available = true")
-    List<Item> search(@Param("text") String text);
+    List<Item> search(@Param("text") String text, PageRequest pageRequest);
 
-    List<Item> findAllByOwnerId(Integer ownerId);
+    List<Item> findAllByRequestId(Integer requestId);
+
+    Page<Item> findAllByOwnerId(Integer ownerId, PageRequest pageRequest);
+
 }
