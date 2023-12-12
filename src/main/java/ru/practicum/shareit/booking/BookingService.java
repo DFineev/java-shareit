@@ -113,7 +113,6 @@ public class BookingService {
         BookingState bookingState = checkState(stateParam);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
-        Sort sort1 = Sort.by(Sort.Direction.ASC, "start");
         List<Booking> bookingList;
         LocalDateTime dateTimeNow = LocalDateTime.now();
 
@@ -131,7 +130,7 @@ public class BookingService {
                 bookingList = repository.findAllByBookerIdAndStartIsAfter(user.getId(), dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case CURRENT:
-                bookingList = repository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(user.getId(), dateTimeNow, dateTimeNow, sort1, PageRequest.of((from / size), size));
+                bookingList = repository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(user.getId(), dateTimeNow, dateTimeNow, sort, PageRequest.of((from / size), size));
                 break;
             case WAITING:
                 bookingList = repository.findAllByBookerIdAndStatus(user.getId(), BookingStatus.WAITING, PageRequest.of((from / size), size));
