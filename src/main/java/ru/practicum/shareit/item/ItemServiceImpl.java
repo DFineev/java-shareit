@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -15,6 +16,7 @@ import ru.practicum.shareit.item.dto.ItemFullDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import javax.transaction.Transactional;
@@ -32,25 +34,41 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public List<ItemFullDto> getItems(Integer userId) {
-        return itemRepository.findAllByOwnerId(userId)
+    public List<ItemFullDto> getItems(Integer userId, Integer from, Integer size) {
+        if (from < 0 || size < 0) {
+            throw new ValidateException("Arguments can't be negative.");
+        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new ObjectNotFoundException("User not found."));
+
+        return itemRepository
+                .findAllByOwnerId(userId, PageRequest.of((from / size), size))
                 .stream()
                 .map(ItemMapper::toItemFull)
                 .peek(this::setBookingToItem)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
-    public ItemDto addNewItem(int userId, ItemDto itemDto) {
+    public ItemDto addNewItem(Integer userId, ItemDto itemDto) {
         if (itemCheck(itemDto)) {
-            throw new ValidateException("Валидация не пройдена");
+            throw new ValidateException("Validation didn't complete");
         }
         Item newItem = ItemMapper.toItem(itemDto);
         newItem.setOwner(userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User not found.")));
+        if (itemDto.getRequestId() == null) {
+            return ItemMapper.toDto(itemRepository.save(newItem));
+        }
+        ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("Request not found."));
+        newItem.setRequest(itemRequest);
+
         return ItemMapper.toDto(itemRepository.save(newItem));
     }
 
@@ -59,16 +77,17 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(Integer userId, Integer itemId, ItemDto item) {
         Item updatedItem = itemRepository.findById(itemId)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Item not found."));
+                        new ObjectNotFoundException("Объект не найден"));
         if (!Objects.equals(updatedItem.getOwner().getId(), userId)) {
-            throw new ObjectNotFoundException("Item not belongs to this user.");
+            throw new ObjectNotFoundException("Пользователь не является владельцем объекта");
         }
-        itemUpdate(updatedItem, item);
-        return ItemMapper.toDto(itemRepository.save(updatedItem));
+        Item savedItem = itemUpdate(updatedItem, item);
+        itemRepository.save(savedItem);
+        return ItemMapper.toDto(savedItem);
     }
 
     @Override
-    public void deleteItem(int userId, int itemId) {
+    public void deleteItem(Integer userId, Integer itemId) {
         if (!itemRepository.existsById(itemId)) {
             throw new ObjectNotFoundException("Объект не найден");
         }
@@ -76,13 +95,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemFullDto getItemByUserIdAndItemId(int userId, int itemId) {
+    public ItemFullDto getItemByUserIdAndItemId(Integer userId, Integer itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ObjectNotFoundException("Объект не найден"));
 
         ItemFullDto itemFullDto = ItemMapper.toItemFull(item);
 
-        if (item.getOwner().getId() == userId) {
+        if (Objects.equals(item.getOwner().getId(), userId)) {
             setBookingToItem(itemFullDto);
         }
 
@@ -97,11 +116,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String query) {
+    public List<ItemDto> searchItems(String query, Integer from, Integer size) {
         if (query.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.search(query).stream()
+            return itemRepository.search(query, PageRequest.of((from / size), size))
+                    .stream()
                     .map(ItemMapper::toDto)
                     .collect(Collectors.toList());
         }
@@ -152,10 +172,11 @@ public class ItemServiceImpl implements ItemService {
         }
         if (itemDto.getOwner() != null) {
             updatedItem.setOwner(userRepository.findById(itemDto.getOwner())
-                    .orElseThrow(() -> new ObjectNotFoundException("User not found.")));
+                    .orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
         }
-        if (itemDto.getRequest() != null) {
-            updatedItem.setRequest(new ItemRequest());
+        if (itemDto.getRequestId() != null) {
+            updatedItem.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                    new ObjectNotFoundException("Запрос не найден")));
         }
         return updatedItem;
     }

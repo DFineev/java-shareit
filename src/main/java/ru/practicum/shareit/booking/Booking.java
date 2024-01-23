@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Table(name = "booking")
 @Getter
 @Setter
-@ToString public class Booking {
+@ToString
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,11 +27,11 @@ import java.time.LocalDateTime;
     @Column(name = "end_date")
     private LocalDateTime end;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Item.class)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "booker_id", referencedColumnName = "id")
     private User booker;
 
